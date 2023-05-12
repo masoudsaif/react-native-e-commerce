@@ -3,6 +3,20 @@ const USER_ROLES = {
   CUSTOMER: "CUSTOMER",
 };
 
+const ORDER_STATUS = {
+  ORDERED: "ORDERED",
+  DELIVERED: "DELIVERED",
+  CANCELED: "CANCELED",
+  RETURNED: "RETURNED",
+};
+
+const PAYMENT_TYPE = {
+  CASH: "CASH",
+  CARD: "CARD",
+};
+
 module.exports = {
   USER_ROLES,
+  ORDER_STATUS,
+  PAYMENT_TYPE,
 };

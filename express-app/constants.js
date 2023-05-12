@@ -1,13 +1,14 @@
 const PORT = 4000;
-const URI =
-  "mongodb+srv://admin:a7oCH8DI5TmbWx7C@cluster.jmlrro8.mongodb.net/?retryWrites=true&w=majority";
 const DB = "e-commerce";
 const USERS = "users";
 const PRODUCTS = "products";
 const ORDERS = "orders";
-const KEY =
-  "_Qb4YFrSO_L_M8hQiyIC-CIBmad84arAchnS47pykSPwZWkQXZCkBivQLa7TwNTRWmUKaSPoXmSOLdjeDNMvxCim-SySHbLsjji_Bp9Mi05K_z_mnM9hUZhmnryGybe-sHHZAyjYHrysrrxpGJIwmc2ynYQYqjMXP_W8pAJH1oc";
 const TOKEN_EXPIRY_TIME = 86400;
+const URI = process.env.DB_URI;
+const KEY = process.env.JWT_KEY;
+const ACCESS_KEY = process.env.ACCESS_KEY;
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY;
+const BUCKET_NAME = process.env.BUCKET_NAME;
 
 module.exports = {
   PORT,
@@ -18,4 +19,6 @@ module.exports = {
   ORDERS,
   KEY,
   TOKEN_EXPIRY_TIME,
+  ACCESS_KEY,
+  SECRET_ACCESS_KEY,
 };
