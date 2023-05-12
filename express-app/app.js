@@ -15,7 +15,7 @@ const {
 const { EMAIL_REGEX } = require("./regex");
 const { capitalize } = require("./string");
 const { USER_ROLES } = require("./enums");
-import { verifyAdminToken } from "./middlewares";
+const { verifyAdminToken } = require("./middlewares");
 
 const app = express();
 const client = new MongoClient(URI);
@@ -37,29 +37,31 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.post("sign-up", async (req, res) => {
+app.post("/sign-up", async (req, res) => {
   if (!req.body) {
-    res.status(400).send({ message: "Please enter the missing data!" });
+    return res.status(400).send({ message: "Please enter the missing data!" });
   }
 
   const { email, password, confirmPassword, fullName } = req.body;
 
   if (!email || !EMAIL_REGEX.test(email)) {
-    res.status(400).send({ message: "Please enter a valid email!" });
+    return res.status(400).send({ message: "Please enter a valid email!" });
   }
 
   if (!password || password.length < 8) {
-    res
+    return res
       .status(400)
       .send({ message: "Please enter a password longer than 8 characters!" });
   }
 
   if (!confirmPassword || confirmPassword !== password) {
-    res.status(400).send({ message: "Confirm password must match password!" });
+    return res
+      .status(400)
+      .send({ message: "Confirm password must match password!" });
   }
 
   if (!fullName || fullName.split(" ").length < 2) {
-    res.status(400).send({ message: "Please enter your fullname!" });
+    return res.status(400).send({ message: "Please enter your fullname!" });
   }
 
   const _id = new ObjectId();
@@ -93,7 +95,7 @@ app.post("sign-up", async (req, res) => {
       }
     );
 
-    res.status(200).send({
+    return res.status(200).send({
       _id,
       token,
       email: lowerCaseEmail,
@@ -103,25 +105,25 @@ app.post("sign-up", async (req, res) => {
       isDisabled,
     });
   } catch (e) {
-    res
+    return res
       .status(500)
       .send({ message: "Something went wrong, please try again later!" });
   }
 });
 
-app.post("sign-in", async (req, res) => {
+app.post("/sign-in", async (req, res) => {
   if (!req.body) {
-    res.status(400).send({ message: "Please enter the missing data!" });
+    return res.status(400).send({ message: "Please enter the missing data!" });
   }
 
   const { email, password } = req.body;
 
   if (!email || !EMAIL_REGEX.test(email)) {
-    res.status(400).send({ message: "Invalid credentials!" });
+    return res.status(400).send({ message: "Invalid credentials!" });
   }
 
   if (!password || password.length < 8) {
-    res.status(400).send({ message: "Invalid credentials!" });
+    return res.status(400).send({ message: "Invalid credentials!" });
   }
 
   const lowerCaseEmail = email.toLowerCase();
@@ -130,13 +132,13 @@ app.post("sign-in", async (req, res) => {
     const user = await db.collection(USERS).findOne({ email: lowerCaseEmail });
 
     if (!user) {
-      res.status(400).send({ message: "Invalid credentials!" });
+      return res.status(400).send({ message: "Invalid credentials!" });
     }
 
     const isPasswordValid = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordValid) {
-      res.status(400).send({ message: "Invalid credentials!" });
+      return res.status(400).send({ message: "Invalid credentials!" });
     }
 
     const token = jwt.sign(
@@ -151,39 +153,41 @@ app.post("sign-in", async (req, res) => {
       }
     );
 
-    res.status(200).send({
+    return res.status(200).send({
       ...user,
       token,
     });
   } catch (e) {
-    res
+    return res
       .status(500)
       .send({ message: "Something went wrong, please try again later!" });
   }
 });
 
 app.post("/products", verifyAdminToken, async (req, res) => {
+  console.log(req.body);
+  console.log(req.files);
   if (!req.body || !req.files) {
-    res.status(400).send({ message: "Please enter the missing data!" });
+    return res.status(400).send({ message: "Please enter the missing data!" });
   }
 
   const { images } = req.files;
   const { name, category, price } = req.body;
 
-  if (!images.length) {
-    res.status(400).send({ message: "Please upload an image!" });
+  if (!images.length && !images.name) {
+    return res.status(400).send({ message: "Please upload an image!" });
   }
 
   if (!name) {
-    res.status(400).send({ message: "Please enter a name!" });
+    return res.status(400).send({ message: "Please enter a name!" });
   }
 
   if (!category) {
-    res.status(400).send({ message: "Please enter a category!" });
+    return res.status(400).send({ message: "Please enter a category!" });
   }
 
   if (!price) {
-    res.status(400).send({ message: "Please enter a price!" });
+    return res.status(400).send({ message: "Please enter a price!" });
   }
 
   const _id = new ObjectId();
@@ -191,26 +195,32 @@ app.post("/products", verifyAdminToken, async (req, res) => {
   const capitalizedCategory = capitalize(category);
   const time = new Date().toLocaleDateString();
 
-  const imagesUris = images.map((img, i) => {
-    const uri = `${_id.toString()}${i}`;
-    img.mv(__dirname + "/products/" + uri);
+  const imagesUris = images.length
+    ? images.map((img, i) => {
+        const uri = `${__dirname}"/products/"${_id.toString()}${i}${img.name}`;
+        img.mv(uri);
 
-    return uri;
-  });
+        return uri;
+      })
+    : [`${_id.toString()}0`];
 
+  if (!images.length) {
+    images.mv(`${__dirname}"/products/"${_id.toString()}0${images.name}`);
+  }
+  console.log(imagesUris);
   try {
-    await db.collection(PRODUCTS).insertOne({
-      _id,
-      name: capitalizedName,
-      category: capitalizedCategory,
-      images: imagesUris,
-      time,
-      review: { score: 0, feedbacks: [] },
-    });
+    // await db.collection(PRODUCTS).insertOne({
+    //   _id,
+    //   name: capitalizedName,
+    //   category: capitalizedCategory,
+    //   images: imagesUris,
+    //   time,
+    //   review: { score: 0, feedbacks: [] },
+    // });
 
-    res.status(200).send({ message: "Product added successfully!" });
+    return res.status(200).send({ message: "Product added successfully!" });
   } catch (e) {
-    res
+    return res
       .status(500)
       .send({ message: "Something went wrong, please try again later!" });
   }

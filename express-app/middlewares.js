@@ -1,21 +1,27 @@
+const jwt = require("jsonwebtoken");
 const { USER_ROLES } = require("./enums");
+const { KEY } = require("./constants");
 
 const validateAuthorizationHeaders = (req, res) => {
   if (
     !req.headers ||
     !req.headers.authorization ||
-    !(req.headers.authorization.split(" ")[0] === "JWT")
+    !(req.headers.authorization.split(" ")[0] === "Bearer")
   ) {
-    res.status(401).send({ message: "Unauthorized access!" });
+    return false;
   }
+
+  return true;
 };
 
 const verifyCustomerToken = (req, res, next) => {
-  validateAuthorizationHeaders(req, res);
+  if (!validateAuthorizationHeaders(req, res)) {
+    return res.status(401).send({ message: "Unauthorized access!" });
+  }
 
   jwt.verify(req.headers.authorization.split(" ")[1], KEY, (error, decode) => {
     if (error) {
-      res.status(401).send({ message: "Unauthorized access!" });
+      return res.status(401).send({ message: "Unauthorized access!" });
     } else {
       req.user = decode;
       next();
@@ -24,14 +30,16 @@ const verifyCustomerToken = (req, res, next) => {
 };
 
 const verifyAdminToken = (req, res, next) => {
-  validateAuthorizationHeaders(req, res);
+  if (!validateAuthorizationHeaders(req, res)) {
+    return res.status(401).send({ message: "Unauthorized access!" });
+  }
 
   jwt.verify(req.headers.authorization.split(" ")[1], KEY, (error, decode) => {
     if (error) {
-      res.status(401).send({ message: "Unauthorized access!" });
+      return res.status(401).send({ message: "Unauthorized access!" });
     } else {
       if (decode.role === USER_ROLES.CUSTOMER) {
-        res.status(403).send({ message: "Forbidden access!" });
+        return res.status(403).send({ message: "Forbidden access!" });
       } else {
         req.user = decode;
         next();
