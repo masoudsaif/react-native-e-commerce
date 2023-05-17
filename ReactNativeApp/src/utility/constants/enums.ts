@@ -1,0 +1,16 @@
+export const USER_ROLES = {
+  ADMIN: 'ADMIN',
+  CUSTOMER: 'CUSTOMER',
+};
+
+export const ORDER_STATUS = {
+  ORDERED: 'ORDERED',
+  DELIVERED: 'DELIVERED',
+  CANCELED: 'CANCELED',
+  RETURNED: 'RETURNED',
+};
+
+export const PAYMENT_TYPE = {
+  CASH: 'CASH',
+  CARD: 'CARD',
+};

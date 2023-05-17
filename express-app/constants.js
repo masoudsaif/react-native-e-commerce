@@ -21,4 +21,5 @@ module.exports = {
   TOKEN_EXPIRY_TIME,
   ACCESS_KEY,
   SECRET_ACCESS_KEY,
+  BUCKET_NAME,
 };

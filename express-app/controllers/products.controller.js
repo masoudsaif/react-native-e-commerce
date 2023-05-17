@@ -1,6 +1,9 @@
-const { PRODUCTS } = require("../constants");
+const { ObjectId } = require("mongodb");
+const { PutObjectCommand } = require("@aws-sdk/client-s3");
+const { PRODUCTS, BUCKET_NAME } = require("../constants");
 const { getDb } = require("../mongo");
 const { capitalize } = require("../string");
+const { getS3Client } = require("../s3-client");
 
 const readProductsController = async (req, res) => {
   const db = getDb();
@@ -18,30 +21,49 @@ const readProductsController = async (req, res) => {
 
 const insertProductController = async (req, res) => {
   const db = getDb();
+  const s3 = getS3Client();
   const { name, category, price } = req.body;
-
+  const { images } = req.files;
   const _id = new ObjectId();
-  const capitalizedName = capitalize(name);
   const capitalizedCategory = capitalize(category);
+  const intPrice = parseInt(price);
   const time = new Date().toLocaleDateString();
-  const images = req.files.map((file) => ({
-    data: file.buffer,
-    contentType: file.mimetype,
-  }));
+
+  const uploadedImages = [];
+  const createUploadPromise = (file, i) => {
+    const params = {
+      Bucket: BUCKET_NAME,
+      Key: `products/${_id.toString()}${i}`,
+      Body: file.data,
+      ContentType: file.mimetype,
+    };
+    uploadedImages.push(
+      `https://${BUCKET_NAME}.s3.amazonaws.com/products/${_id.toString()}${i}`
+    );
+    const command = new PutObjectCommand(params);
+    return s3.send(command);
+  };
+
+  const uploadPromises = images.length
+    ? images.map(createUploadPromise)
+    : [createUploadPromise(images, 0)];
 
   try {
-    await db.collection(PRODUCTS).insertOne({
+    await Promise.all(uploadPromises);
+    const product = {
       _id,
-      name: capitalizedName,
+      name,
       category: capitalizedCategory,
-      price,
-      images,
+      price: intPrice,
+      images: uploadedImages,
       time,
       review: { score: 0, feedbacks: [] },
-    });
+    };
 
-    return res.status(200).send({ message: "Product added successfully!" });
-  } catch (e) {
+    await db.collection(PRODUCTS).insertOne(product);
+    return res.status(201).json(product);
+  } catch (error) {
+    console.error(error);
     return res
       .status(500)
       .send({ message: "Something went wrong, please try again later!" });
@@ -100,7 +122,7 @@ const deleteProductController = async (req, res) => {
   try {
     await db.collection(PRODUCTS).deleteOne({ _id });
 
-    return res.status(201).send({ message: "Product deleted successfully!" });
+    return res.status(200).send({ message: "Product deleted successfully!" });
   } catch (e) {
     return res
       .status(500)

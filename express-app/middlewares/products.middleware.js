@@ -5,7 +5,7 @@ const validateProduct = (req, res, next) => {
 
   const { name, category, price } = req.body;
 
-  if (!req.files.length) {
+  if (!req.files.images) {
     return res.status(400).send({ message: "Please upload an image!" });
   }
 

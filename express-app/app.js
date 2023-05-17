@@ -1,5 +1,6 @@
+require("dotenv").config();
 const express = require("express");
-const multer = require("multer");
+const fileUpload = require("express-fileupload");
 const { PORT } = require("./constants");
 const {
   verifyAdminToken,
@@ -40,7 +41,6 @@ const {
 const { validateUserUpdate } = require("./middlewares/users.controller");
 
 const app = express();
-const upload = multer({ storage: multer.memoryStorage() });
 
 connect();
 
@@ -48,7 +48,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use(upload.array());
+app.use(fileUpload());
 
 app.use(express.static("public"));
 
@@ -91,7 +91,6 @@ app.post(
   "/products",
   verifyAdminToken,
   validateProduct,
-  upload.array("images"),
   insertProductController
 );
 
