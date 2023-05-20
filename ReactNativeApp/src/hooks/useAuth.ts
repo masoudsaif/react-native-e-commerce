@@ -3,17 +3,17 @@ import {Dispatch, SetStateAction} from 'react';
 import {useDispatch} from 'react-redux';
 
 import {signInUser, signOutUser} from '../redux/reducers/authSlice';
-import {sensitiveStorage} from '../redux/reducers/reducer';
 import {turnOffBoolean, turnOnBoolean} from '../redux/reducers/booleansSlice';
+import {sensitiveStorage} from '../redux/reducers/reducer';
+import {clearSettings} from '../redux/reducers/settingsSlice';
 import {setToken} from '../redux/reducers/tokenSlice';
 import {SIGN_IN_API, SIGN_UP_API} from '../utility/constants/api';
 import axios from '../utility/constants/axios';
 import {TOKEN} from '../utility/constants/keys';
 import {SCREENS} from '../utility/constants/screens';
 import {INavigation} from '../utility/constants/types';
-import {clearCart} from '../redux/reducers/settingsSlice';
 
-interface IAuthValues {
+export interface IAuthValues {
   fullName?: string;
   email: string;
   password: string;
@@ -39,7 +39,7 @@ const useAuth = (setError?: Dispatch<SetStateAction<string | undefined>>) => {
       })
       .catch(error => {
         if (setError) {
-          setError(error.response.data.message || error.message);
+          setError(error.response?.data.message || error.message);
         }
       })
       .finally(() => dispatch(turnOffBoolean('isLoading')));
@@ -49,7 +49,7 @@ const useAuth = (setError?: Dispatch<SetStateAction<string | undefined>>) => {
     dispatch(signOutUser());
     dispatch(setToken(null));
     dispatch(turnOffBoolean('isTabBarActive'));
-    dispatch(clearCart());
+    dispatch(clearSettings());
     navigate({name: SCREENS.SIGN_IN});
     axios.defaults.headers.common.Authorization = '';
     sensitiveStorage.removeItem(TOKEN);

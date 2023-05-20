@@ -22,7 +22,7 @@ const readProductsController = async (req, res) => {
 const insertProductController = async (req, res) => {
   const db = getDb();
   const s3 = getS3Client();
-  const { name, category, price } = req.body;
+  const { name, category, description, price } = req.body;
   const { images } = req.files;
   const _id = new ObjectId();
   const capitalizedCategory = capitalize(category);
@@ -56,6 +56,7 @@ const insertProductController = async (req, res) => {
       category: capitalizedCategory,
       price: intPrice,
       images: uploadedImages,
+      description,
       time,
       review: { score: 0, feedbacks: [] },
     };
@@ -63,7 +64,6 @@ const insertProductController = async (req, res) => {
     await db.collection(PRODUCTS).insertOne(product);
     return res.status(201).json(product);
   } catch (error) {
-    console.error(error);
     return res
       .status(500)
       .send({ message: "Something went wrong, please try again later!" });
@@ -76,37 +76,35 @@ const updateProductReviewController = async (req, res) => {
   const { stars, comment } = req.body;
   const _id = new ObjectId(id);
   const _feedbackId = new ObjectId();
+  const numberedStars = parseInt(stars);
 
   try {
     const product = await db.collection(PRODUCTS).findOne({ _id });
 
     const { feedbacks } = product.review;
 
-    const didCustomerReview = feedbacks.some(
-      (review) => review._id === req.user._id
-    );
-
-    if (didCustomerReview) {
-      return res
-        .status(400)
-        .send({ message: "Customer already reviewed this product!" });
-    }
-
     await db.collection(PRODUCTS).updateOne(
       { _id },
       {
-        $push: { "review.$.feedbacks": { _id: _feedbackId, stars, comment } },
+        $push: {
+          "review.feedbacks": {
+            _id: _feedbackId,
+            stars: numberedStars,
+            comment,
+          },
+        },
       }
     );
 
-    const score = feedbacks.reduce((acc, a) => acc + a, 0);
+    const score = feedbacks.reduce((acc, a) => acc + a.stars, 0);
     const avgScore = score / feedbacks.length;
 
     await db
       .collection(PRODUCTS)
-      .updateOne({ _id }, { $set: { "review.$.score": avgScore } });
-
-    return res.status(200).send({ message: "Review added successfully!" });
+      .updateOne({ _id }, { $set: { "review.score": avgScore } });
+    return res
+      .status(200)
+      .send({ _id: _feedbackId, stars: numberedStars, comment });
   } catch (e) {
     return res
       .status(500)

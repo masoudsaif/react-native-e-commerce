@@ -1,12 +1,21 @@
 import {FC, useMemo} from 'react';
 import React from 'react';
-import {View, ViewProps, ViewStyle} from 'react-native';
+import {
+  StyleProp,
+  TouchableWithoutFeedback,
+  TouchableWithoutFeedbackProps,
+  View,
+  ViewStyle,
+} from 'react-native';
 
-import Icon from '../atoms/Icon';
+import {sizes} from '../../styles/sizes';
 import styles from '../../styles/styles';
+import Icon from '../atoms/Icon';
+import Typography from '../atoms/Typography';
 
-export interface IStarRating extends ViewProps, ViewStyle {
+export interface IStarRating extends TouchableWithoutFeedbackProps, ViewStyle {
   rating: number;
+  style?: StyleProp<ViewStyle>;
 }
 
 const StarRating: FC<IStarRating> = ({rating, style, ...props}) => {
@@ -25,11 +34,16 @@ const StarRating: FC<IStarRating> = ({rating, style, ...props}) => {
     ].map(n => <Icon key={n} name="star" />);
 
   return (
-    <View {...props} style={[styles.row, style, props]}>
-      {renderRating()}
-      {isHalfStarRendered ? <Icon name="star-half" color="orange" /> : null}
-      {renderEmptyRating()}
-    </View>
+    <TouchableWithoutFeedback {...props}>
+      <View style={[styles.row, styles.center, style, props]}>
+        {renderRating()}
+        {isHalfStarRendered ? <Icon name="star-half" color="orange" /> : null}
+        {renderEmptyRating()}
+        <Typography marginLeft={sizes.sm}>{`(${rating.toFixed(
+          1,
+        )})`}</Typography>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

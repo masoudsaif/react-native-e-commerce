@@ -5,16 +5,31 @@ import {
   INC_QUANTITY_NC,
   MAX_QUANTITY_NC,
 } from '../../utility/constants/notifications';
-import {ICartItem} from '../../utility/constants/types';
+import {
+  ICartItem,
+  IFeedback,
+  IOrder,
+  IProduct,
+  IUser,
+  OrderStatus,
+} from '../../utility/constants/types';
 
 interface ISettings {
+  products: IProduct[];
   cart: ICartItem[];
   notifications: string[];
+  orders: IOrder[];
+  usersOrders: IOrder[];
+  users: IUser[];
 }
 
 const initialState: ISettings = {
+  products: [],
   cart: [],
   notifications: [],
+  orders: [],
+  usersOrders: [],
+  users: [],
 };
 
 export const MAX_QUANTITY = 9;
@@ -72,6 +87,13 @@ const settingsSlice = createSlice({
   name: 'setting',
   initialState,
   reducers: {
+    clearSettings(state) {
+      state.cart = [];
+      state.products = [];
+      state.orders = [];
+      state.users = [];
+      state.usersOrders = [];
+    },
     pushNotification(state, {payload}: PayloadAction<string>) {
       handlePushNotification(state.notifications, payload);
     },
@@ -138,17 +160,77 @@ const settingsSlice = createSlice({
 
       handleCartItemDecrement(state.cart, i);
     },
+    setProducts(state, {payload}: PayloadAction<IProduct[]>) {
+      state.products = payload;
+    },
+    pushProductReview(
+      state,
+      {payload}: PayloadAction<{_id: string; feedback: IFeedback}>,
+    ) {
+      const i = state.products.findIndex(({_id}) => _id === payload._id);
+
+      if (i > -1) {
+        const {review} = state.products[i];
+        review.feedbacks.push(payload.feedback);
+
+        const score = review.feedbacks.reduce((acc, a) => (acc += a.stars), 0);
+        review.score = score / review.feedbacks.length;
+      }
+    },
+    setOrders(state, {payload}: PayloadAction<IOrder[]>) {
+      state.orders = payload;
+    },
+    setUsersOrders(state, {payload}: PayloadAction<IOrder[]>) {
+      state.usersOrders = payload;
+    },
+    updateOrderStatus(
+      state,
+      {
+        payload,
+      }: PayloadAction<{_id: string; status: OrderStatus; isAdmin?: boolean}>,
+    ) {
+      const orderType = payload.isAdmin ? 'usersOrders' : 'orders';
+      const i = state[orderType].findIndex(({_id}) => _id === payload._id);
+
+      if (i > -1) {
+        state[orderType][i].status = payload.status;
+        if (orderType !== 'usersOrders') {
+          state.usersOrders = [];
+        }
+      }
+    },
+    setUsers(state, {payload}: PayloadAction<IUser[]>) {
+      state.users = payload;
+    },
+    updateUserIsDisable(
+      state,
+      {payload}: PayloadAction<{_id: string; isDisabled: boolean}>,
+    ) {
+      const i = state.users.findIndex(({_id}) => _id === payload._id);
+
+      if (i > -1) {
+        state.users[i].isDisabled = payload.isDisabled;
+      }
+    },
   },
 });
 
 export const {
+  clearSettings,
+  clearCart,
   pushNotification,
   removeNotification,
-  clearCart,
   pushCartItem,
   removeCartItem,
   incCartItem,
   decCartItem,
+  setProducts,
+  setOrders,
+  setUsersOrders,
+  setUsers,
+  pushProductReview,
+  updateOrderStatus,
+  updateUserIsDisable,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
   screenHeaderPadding: {
     paddingTop: 80,
   },
+  screenHorizontalMargin: {
+    marginHorizontal: '10%',
+  },
   screenPadding: {
     paddingVertical: sizes['7xl'],
     paddingHorizontal: sizes['5xl'],
@@ -31,6 +34,9 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+  },
+  wrap: {
+    flexWrap: 'wrap',
   },
   spaceBetween: {
     justifyContent: 'space-between',
@@ -47,13 +53,28 @@ const styles = StyleSheet.create({
   semiFullWidth: {
     width: '80%',
   },
+  halfWidth: {
+    width: '50%',
+  },
   centerContent: {
     justifyContent: 'center',
+  },
+  centerMargin: {
+    marginleft: 'auto',
+    marginRight: 'auto',
+  },
+  height50: {
+    height: 50,
+  },
+  marginRight50: {
+    marginRight: 50,
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     position: 'absolute',
+    width: '100%',
     paddingTop: StatusBar.currentHeight || 80,
     paddingHorizontal: sizes['5xl'],
     zIndex: sizes.xs,
@@ -72,6 +93,9 @@ const styles = StyleSheet.create({
   miniSeparator: {
     marginVertical: sizes.lg,
   },
+  hugeMarginBottom: {
+    marginBottom: sizes['7xl'],
+  },
   hugeVerticalPadding: {
     paddingVertical: sizes['11xl'],
   },
@@ -85,6 +109,9 @@ const styles = StyleSheet.create({
   },
   flex: {
     flex: 1,
+  },
+  alignStart: {
+    alignSelf: 'flex-start',
   },
   starRating: {
     flexDirection: 'row',
@@ -118,6 +145,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 50,
     height: 50,
+    borderRadius: 500,
+  },
+  gradientCircularTextButton: {
+    width: 35,
+    height: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 500,
   },
   profileImage: {

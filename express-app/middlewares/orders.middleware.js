@@ -5,7 +5,7 @@ const validateOrder = (req, res, next) => {
     return res.status(400).send({ message: "Please enter the missing data!" });
   }
 
-  const { products, payment } = req.body;
+  const { products, payment, card } = req.body;
 
   if (!products || !products.length) {
     return res.status(400).send({ message: "Please enter the products!" });
@@ -22,6 +22,27 @@ const validateOrder = (req, res, next) => {
     upperCasePayment !== PAYMENT_TYPE.CASH
   ) {
     return res.status(400).send({ message: "Invalid payment!" });
+  }
+
+  if (upperCasePayment === PAYMENT_TYPE.CARD && !card) {
+    return res.status(400).send({ message: "Invalid payment!" });
+  }
+
+  if (upperCasePayment === PAYMENT_TYPE.CARD && card && !card.number) {
+    return res.status(400).send({ message: "Invalid card number!" });
+  }
+
+  if (upperCasePayment === PAYMENT_TYPE.CARD && card && !card.cvc) {
+    return res.status(400).send({ message: "Invalid cvc number!" });
+  }
+
+  if (
+    upperCasePayment === PAYMENT_TYPE.CARD &&
+    card &&
+    !card.cvc.length === 3 &&
+    !card.number.length === 16
+  ) {
+    return res.status(400).send({ message: "Invalid card or cvc number!" });
   }
 
   next();

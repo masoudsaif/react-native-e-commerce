@@ -6,6 +6,7 @@ const validateUserUpdate = (req, res, next) => {
   const { isDisabled } = req.body;
 
   if (typeof isDisabled !== "boolean") {
+    console.log("here");
     return res.status(400).send({ message: "Please enter isDisabled!" });
   }
 

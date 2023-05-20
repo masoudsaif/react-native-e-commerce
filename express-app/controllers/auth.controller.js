@@ -18,6 +18,10 @@ const signInController = async (req, res) => {
       return res.status(400).send({ message: "Invalid credentials!" });
     }
 
+    if (user.isDisabled) {
+      return res.status(400).send({ message: "Your account is disabled!" });
+    }
+
     const isPasswordValid = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordValid) {

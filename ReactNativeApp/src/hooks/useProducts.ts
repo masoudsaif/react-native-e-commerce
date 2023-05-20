@@ -1,24 +1,31 @@
-import {useState} from 'react';
 import {useDispatch} from 'react-redux';
 
 import {turnOffBoolean, turnOnBoolean} from '../redux/reducers/booleansSlice';
+import {setProducts} from '../redux/reducers/settingsSlice';
 import {PRODUCTS_API} from '../utility/constants/api';
 import axios from '../utility/constants/axios';
-import {IProduct} from '../utility/constants/types';
+import useAuth from './useAuth';
 
 const useProducts = () => {
   const dispatch = useDispatch();
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const {handleSignOut} = useAuth();
 
-  const handleGetProducts = () => {
+  const getProducts = () => {
     dispatch(turnOnBoolean('isLoading'));
     axios
       .get(PRODUCTS_API)
-      .then(({data}) => setProducts(data))
+      .then(({data}) => {
+        dispatch(setProducts(data));
+      })
+      .catch(error => {
+        if (error.response?.status === 401) {
+          handleSignOut();
+        }
+      })
       .finally(() => dispatch(turnOffBoolean('isLoading')));
   };
 
-  return {products, handleGetProducts};
+  return {getProducts};
 };
 
 export default useProducts;

@@ -11,11 +11,11 @@ import {useDispatch} from 'react-redux';
 import {pushCartItem} from '../../redux/reducers/settingsSlice';
 import {sizes} from '../../styles/sizes';
 import styles from '../../styles/styles';
+import {PRODUCTS_SCREENS} from '../../utility/constants/screens';
 import {INavigationProp, IProduct} from '../../utility/constants/types';
 import {DOLLAR_UNICODE} from '../../utility/constants/unicodes';
 import Typography from '../atoms/Typography';
 import IconButton from '../molecules/IconButton';
-import {SCREENS} from '../../utility/constants/screens';
 
 export interface IProductCardProps
   extends ViewProps,
@@ -30,7 +30,7 @@ const ProductCard: FC<IProductCardProps> = memo(
     const {name, category, price, images} = product;
 
     const handleProductNavigation = () =>
-      navigation.navigate(SCREENS.PRODUCT, product);
+      navigation.navigate(PRODUCTS_SCREENS.PRODUCT, product);
 
     const handleAddToCart = () =>
       dispatch(pushCartItem({...product, quantity: 1}));

@@ -1,14 +1,15 @@
 import React, {FC, memo} from 'react';
 import {FlatList, ListRenderItemInfo, View} from 'react-native';
-import {ICartItem, INavigationProp} from '../utility/constants/types';
-import styles from '../styles/styles';
+import {useSelector} from 'react-redux';
+
 import Error from '../components/molecules/Error';
 import CartFooter from '../components/organisms/CartFooter';
-import {sizes} from '../styles/sizes';
-import SwipeableCartCard from '../components/organisms/SwipeableCartCard';
 import ScreenLayout from '../components/organisms/ScreenLayout';
-import {useSelector} from 'react-redux';
+import SwipeableCartCard from '../components/organisms/SwipeableCartCard';
 import {settingsState} from '../redux/store';
+import {sizes} from '../styles/sizes';
+import styles from '../styles/styles';
+import {ICartItem, INavigationProp} from '../utility/constants/types';
 
 const CartScreen: FC<INavigationProp> = memo(({navigation}) => {
   const {cart} = useSelector(settingsState);
@@ -20,7 +21,9 @@ const CartScreen: FC<INavigationProp> = memo(({navigation}) => {
   const renderEmpty = () => <Error isAnimated title=" Your cart is empty!" />;
 
   const renderFooter = () =>
-    cart.length ? <CartFooter style={[styles.screenPadding]} /> : null;
+    cart.length ? (
+      <CartFooter navigation={navigation} style={[styles.screenPadding]} />
+    ) : null;
 
   const renderItem = (item: ListRenderItemInfo<ICartItem>) => (
     <SwipeableCartCard

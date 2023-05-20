@@ -1,24 +1,25 @@
 import {useFocusEffect} from '@react-navigation/native';
 import React, {FC, memo, MutableRefObject, useRef} from 'react';
 import {ScrollView, View} from 'react-native';
+import {useDispatch} from 'react-redux';
+
+import ProductImage from '../components/atoms/ProductImage';
+import Typography from '../components/atoms/Typography';
+import Button from '../components/molecules/Button';
+import StarRating from '../components/molecules/StarRating';
+import ProductAction from '../components/organisms/ProductAction';
+import ProductQuantityButtons from '../components/organisms/ProductQuantityButtons';
+import ScreenLayout from '../components/organisms/ScreenLayout';
+import {pushCartItem} from '../redux/reducers/settingsSlice';
+import palette from '../styles/palette';
+import {sizes} from '../styles/sizes';
+import styles from '../styles/styles';
+import {PRODUCTS_SCREENS, SCREENS} from '../utility/constants/screens';
 import {
   INavigationProp,
   IProduct,
   IRouteProp,
 } from '../utility/constants/types';
-import {SCREENS} from '../utility/constants/screens';
-import {useDispatch} from 'react-redux';
-import {pushCartItem} from '../redux/reducers/settingsSlice';
-import ScreenLayout from '../components/organisms/ScreenLayout';
-import ProductImage from '../components/atoms/ProductImage';
-import styles from '../styles/styles';
-import {sizes} from '../styles/sizes';
-import palette from '../styles/palette';
-import Typography from '../components/atoms/Typography';
-import ProductQuantityButtons from '../components/organisms/ProductQuantityButtons';
-import ProductAction from '../components/organisms/ProductAction';
-import StarRating from '../components/molecules/StarRating';
-import Button from '../components/molecules/Button';
 
 export interface IProductScreenProps extends INavigationProp, IRouteProp {}
 
@@ -31,6 +32,7 @@ const ProductScreen: FC<IProductScreenProps> = memo(({navigation, route}) => {
   const {
     images,
     name,
+    description,
     review: {score},
     price,
   } = product;
@@ -39,6 +41,9 @@ const ProductScreen: FC<IProductScreenProps> = memo(({navigation, route}) => {
     containerRef.current?.scrollTo({y: 0, animated: false});
 
   const handleCartNavigation = () => navigation.navigate(SCREENS.CART);
+
+  const handleReviewsNavigation = () =>
+    navigation.navigate(PRODUCTS_SCREENS.REVIEWS, product);
 
   const handleFocus = () => {
     if (!productRef.current || productRef.current._id !== product._id) {
@@ -83,7 +88,11 @@ const ProductScreen: FC<IProductScreenProps> = memo(({navigation, route}) => {
               fontColor="primaryFont">
               {name}
             </Typography>
-            <Button title="Review" size="small" />
+            <Button
+              title="Reviews"
+              size="small"
+              onPress={handleReviewsNavigation}
+            />
           </View>
           <View
             style={[
@@ -92,9 +101,16 @@ const ProductScreen: FC<IProductScreenProps> = memo(({navigation, route}) => {
               styles.center,
               styles.spaceBetween,
             ]}>
-            <StarRating rating={score} />
+            <StarRating rating={score} onPress={handleReviewsNavigation} />
             <ProductQuantityButtons quantityRef={quantityRef} />
           </View>
+          <Typography fontWeight="800" size="lg" fontColor="primaryFont">
+            Description
+          </Typography>
+          <Typography size="sm" lineHeight={20} style={styles.miniSeparator}>
+            {description ||
+              'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iustoadipisci iste laboriosam aspernatur odit similique deleniti commodi provident labore repudiandae voluptates sit rerum ipsam temporibus iure ullam, fuga quo praesentium.'}
+          </Typography>
           <ProductAction
             price={price}
             onPress={handleCart}

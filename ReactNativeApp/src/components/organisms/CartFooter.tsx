@@ -1,36 +1,33 @@
-import React, {FC, memo, useMemo} from 'react';
+import React, {FC, memo} from 'react';
 import {View, ViewProps, ViewStyle} from 'react-native';
 
-import styles from '../../styles/styles';
-import Typography from '../atoms/Typography';
-import {DOLLAR_UNICODE} from '../../utility/constants/unicodes';
-import Button from '../molecules/Button';
 import {sizes} from '../../styles/sizes';
-import {useSelector} from 'react-redux';
-import {settingsState} from '../../redux/store';
+import {SCREENS} from '../../utility/constants/screens';
+import {INavigationProp} from '../../utility/constants/types';
+import Button from '../molecules/Button';
+import CartTotal from '../molecules/CartTotal';
 
-export interface ICartFooterProps extends ViewProps, ViewStyle {}
+export interface ICartFooterProps
+  extends ViewProps,
+    ViewStyle,
+    INavigationProp {}
 
-const CartFooter: FC<ICartFooterProps> = memo(({style, ...props}) => {
-  const {cart} = useSelector(settingsState);
-  const total = useMemo(
-    () => cart.reduce((sum, {quantity, price}) => (sum += price * quantity), 0),
-    [cart],
-  );
+const CartFooter: FC<ICartFooterProps> = memo(
+  ({navigation, style, ...props}) => {
+    const handleNavigateCheckout = () => navigation.navigate(SCREENS.CHECKOUT);
 
-  return (
-    <View {...props} style={[props, style]}>
-      <View style={[styles.row, styles.spaceBetween]}>
-        <Typography size="xl" fontColor="primaryFont">
-          Total:
-        </Typography>
-        <Typography size="xl" fontColor="primaryFont">
-          {`${total}${DOLLAR_UNICODE}`}
-        </Typography>
+    return (
+      <View {...props} style={[props, style]}>
+        <CartTotal />
+        <Button
+          title="Checkout"
+          alignSelf="flex-end"
+          marginTop={sizes.xl}
+          onPress={handleNavigateCheckout}
+        />
       </View>
-      <Button title="Checkout" alignSelf="flex-end" marginTop={sizes.xl} />
-    </View>
-  );
-});
+    );
+  },
+);
 
 export default CartFooter;

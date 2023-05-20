@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const { PORT } = require("./constants");
 const {
@@ -38,11 +39,13 @@ const {
   createOrderController,
   readUserOrdersController,
 } = require("./controllers/orders.controller");
-const { validateUserUpdate } = require("./middlewares/users.controller");
+const { validateUserUpdate } = require("./middlewares/users.middleware");
 
 const app = express();
 
 connect();
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -85,7 +88,14 @@ app.patch(
   updateOrderController
 );
 
-app.get("/products", verifyCustomerToken, readProductsController);
+app.patch(
+  "/users/:userId/orders/:id",
+  verifyCustomerToken,
+  validateOrderUpdate,
+  updateOrderController
+);
+
+app.get("/products", readProductsController);
 
 app.post(
   "/products",
@@ -96,7 +106,7 @@ app.post(
 
 app.delete("/products/:id", verifyAdminToken, deleteProductController);
 
-app.patch(
+app.put(
   "/products/:id/review",
   verifyCustomerToken,
   validateProductReview,

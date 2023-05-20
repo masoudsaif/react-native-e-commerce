@@ -1,9 +1,12 @@
 import {NavigationProp, Route} from '@react-navigation/native';
 
-import {USER_ROLES} from './enums';
+import {ORDER_STATUS, PAYMENT_TYPE, USER_ROLES} from './enums';
 
 export type UserRole = keyof typeof USER_ROLES;
 
+export type OrderStatus = keyof typeof ORDER_STATUS;
+
+export type PaymentType = keyof typeof PAYMENT_TYPE;
 export interface INavigationProp {
   navigation: NavigationProp<any>;
 }
@@ -34,6 +37,7 @@ export interface IFeedback {
 export interface IProduct {
   _id: string;
   name: string;
+  description?: string;
   category: string;
   price: number;
   images: string[];
@@ -45,4 +49,26 @@ export interface IProduct {
 
 export interface ICartItem extends IProduct {
   quantity: number;
+}
+
+export interface ICardValues {
+  number: string;
+  expDate: string;
+  cvc: string;
+}
+
+export interface IOrder {
+  _id: string;
+  userId: string;
+  products: ICartItem[];
+  payment: PaymentType;
+  time: string;
+  status: OrderStatus;
+  total: number;
+}
+
+export interface ICheckoutValues {
+  products: ICartItem[];
+  payment: PaymentType;
+  card?: ICardValues;
 }

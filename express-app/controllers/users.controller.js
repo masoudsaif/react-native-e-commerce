@@ -57,6 +57,7 @@ const readUsersController = async (req, res) => {
 };
 
 const updateUserController = async (req, res) => {
+  const db = getDb();
   const { id } = req.params;
   const { isDisabled } = req.body;
   const _id = new ObjectId(id);

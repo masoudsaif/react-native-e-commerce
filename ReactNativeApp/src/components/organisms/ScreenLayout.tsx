@@ -9,18 +9,32 @@ import ScreenHeader, {IScreenHeaderProps} from './ScreenHeader';
 
 export interface IScreenLayoutProps extends ViewProps, INavigationProp {
   children?: ReactNode;
+  title?: string;
   headerProps?: IScreenHeaderProps;
   isBackActive?: boolean;
 }
 
 const ScreenLayout: FC<IScreenLayoutProps> = memo(
-  ({children, headerProps, isBackActive, navigation, style, ...props}) => (
+  ({
+    children,
+    headerProps,
+    isBackActive,
+    navigation,
+    title,
+    style,
+    ...props
+  }) => (
     <View>
       <AppLoader />
       <AppNotifications />
       <View {...props} style={[styles.defaultScreen, style]}>
-        {headerProps || isBackActive ? (
-          <ScreenHeader navigation={navigation} {...headerProps} />
+        {headerProps || isBackActive || title ? (
+          <ScreenHeader
+            isBackActive={isBackActive}
+            title={title}
+            navigation={navigation}
+            {...headerProps}
+          />
         ) : null}
         {children}
       </View>

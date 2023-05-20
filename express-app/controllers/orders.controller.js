@@ -47,7 +47,7 @@ const createOrderController = async (req, res) => {
   );
 
   try {
-    await db.collection(ORDERS).insertOne({
+    const order = {
       _id,
       userId,
       products,
@@ -55,9 +55,11 @@ const createOrderController = async (req, res) => {
       time,
       status: ORDER_STATUS.ORDERED,
       total,
-    });
+    };
 
-    return res.status(200).send({ message: "Created order successfully!" });
+    await db.collection(ORDERS).insertOne(order);
+
+    return res.status(200).send(order);
   } catch (e) {
     return res
       .status(500)
@@ -76,9 +78,7 @@ const updateOrderController = async (req, res) => {
       .collection(ORDERS)
       .updateOne({ _id }, { $set: { status: status.toUpperCase() } });
 
-    return res
-      .status(200)
-      .send({ message: "Order status updated successfully!" });
+    return res.status(200).send({ status: status.toUpperCase() });
   } catch (e) {
     return res
       .status(500)

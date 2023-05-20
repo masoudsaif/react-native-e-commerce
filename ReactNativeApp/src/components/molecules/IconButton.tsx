@@ -20,7 +20,7 @@ import Typography, {ITypographyProps} from '../atoms/Typography';
 
 export interface IIconButtonProps extends ViewProps, ViewStyle {
   isMaterialIcon?: boolean;
-  variant?: 'standard' | 'square' | 'gradient';
+  variant?: 'standard' | 'square' | 'gradient' | 'gradient-text';
   color?: Color;
   fontColor?: Color;
   icon?: IIconProps;
@@ -47,11 +47,11 @@ const IconButton: FC<IIconButtonProps> = forwardRef<View, IIconButtonProps>(
       title,
       style,
       color,
-      fontColor,
       gradientProps,
       titleProps,
       imageProps,
       variant = 'standard',
+      fontColor = variant === 'gradient-text' ? 'white' : undefined,
       onPress,
       ...props
     },
@@ -111,7 +111,9 @@ const IconButton: FC<IIconButtonProps> = forwardRef<View, IIconButtonProps>(
         colors={[palette.green, palette.primary]}
         {...gradientProps}
         style={[
-          styles.gradientIconButton,
+          variant === 'gradient-text'
+            ? styles.gradientCircularTextButton
+            : styles.gradientIconButton,
           props,
           {elevation: sizes.sm},
           gradientProps?.style,
@@ -122,7 +124,9 @@ const IconButton: FC<IIconButtonProps> = forwardRef<View, IIconButtonProps>(
 
     return (
       <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
-        {variant === 'gradient' ? renderLinearGradient() : renderContent()}
+        {variant === 'gradient' || variant === 'gradient-text'
+          ? renderLinearGradient()
+          : renderContent()}
       </TouchableOpacity>
     );
   },

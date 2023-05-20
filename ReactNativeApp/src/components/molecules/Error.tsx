@@ -13,7 +13,9 @@ export interface IErrorProps extends ViewProps, ViewStyle {
 
 const Error: FC<IErrorProps> = memo(({isAnimated, title, style, ...props}) => {
   const renderContent = () => (
-    <View {...props} style={[styles.center, props, style]}>
+    <View
+      {...props}
+      style={[styles.center, props, styles.screenHorizontalPadding, style]}>
       <Image source={sadImg} style={styles.emptyCartImage} />
       <Typography
         size="5xl"

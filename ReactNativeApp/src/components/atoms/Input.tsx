@@ -134,6 +134,10 @@ const Input = forwardRef<TextInput, IInputProps>(
               backgroundColor,
               borderRadius,
               borderColor,
+              width,
+              maxWidth,
+              height,
+              maxHeight,
             },
           ]}>
           {startAdornment}
@@ -142,7 +146,7 @@ const Input = forwardRef<TextInput, IInputProps>(
             ref={ref}
             placeholder={placeholder}
             editable={editable}
-            style={[textStyle, style]}
+            style={[textStyle, {width, maxWidth, height, maxHeight}, style]}
             {...textInputProps}
           />
           {endAdornment}

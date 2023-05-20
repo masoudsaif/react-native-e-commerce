@@ -6,7 +6,7 @@ import {TOKEN} from './keys';
 
 const axios = AXIOS.create({
   baseURL: BASE_URL,
-  timeout: 25000,
+  timeout: 5000,
 });
 
 (async () => {

@@ -1,15 +1,40 @@
-import React, {FC} from 'react';
+import React, {FC, memo} from 'react';
+import {useSelector} from 'react-redux';
 
-import ScreenLayout from '../components/organisms/ScreenLayout';
-import {INavigationProp} from '../utility/constants/types';
 import MenuButton from '../components/molecules/MenuButton';
+import ScreenLayout from '../components/organisms/ScreenLayout';
 import useAuth from '../hooks/useAuth';
+import {authState} from '../redux/store';
+import {adminMenuItems} from '../utility/constants/menu';
+import {SCREENS} from '../utility/constants/screens';
+import {INavigationProp} from '../utility/constants/types';
 
-const MenuScreen: FC<INavigationProp> = ({navigation}) => {
+const MenuScreen: FC<INavigationProp> = memo(({navigation}) => {
+  const {user} = useSelector(authState);
   const {handleSignOut} = useAuth();
+
+  const handleNavigateOrders = () => navigation.navigate(SCREENS.ORDERS);
+
+  const renderAdminMenuButtons = () =>
+    user?.role === 'ADMIN'
+      ? adminMenuItems.map(({screenName, ...item}) => (
+          <MenuButton
+            key={screenName}
+            {...item}
+            onPress={() => navigation.navigate(screenName)}
+          />
+        ))
+      : null;
 
   return (
     <ScreenLayout navigation={navigation}>
+      {renderAdminMenuButtons()}
+      <MenuButton
+        isMaterialIcon
+        iconName="store"
+        title="Orders"
+        onPress={handleNavigateOrders}
+      />
       <MenuButton
         isMaterialIcon
         iconName="logout"
@@ -18,6 +43,6 @@ const MenuScreen: FC<INavigationProp> = ({navigation}) => {
       />
     </ScreenLayout>
   );
-};
+});
 
 export default MenuScreen;

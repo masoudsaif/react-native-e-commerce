@@ -1,5 +1,10 @@
 import React, {FC, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {Animated, ViewProps, ViewStyle} from 'react-native';
+import {
+  Animated,
+  ViewProps,
+  ViewStyle,
+  useWindowDimensions,
+} from 'react-native';
 import {sizes} from '../../styles/sizes';
 
 export interface IBackdropProps extends ViewProps, ViewStyle {
@@ -9,8 +14,6 @@ export interface IBackdropProps extends ViewProps, ViewStyle {
 
 const Backdrop: FC<IBackdropProps> = ({
   position = 'absolute',
-  height = '100%',
-  width = '100%',
   zIndex = sizes.md,
   duration = 400,
   backgroundColor = 'rgba(0, 0, 0, 0.7)',
@@ -19,6 +22,7 @@ const Backdrop: FC<IBackdropProps> = ({
   style,
   ...props
 }) => {
+  const {height, width} = useWindowDimensions();
   const {current: opacity} = useRef(new Animated.Value(0));
   const [isMounted, setIsMounted] = useState(false);
 
