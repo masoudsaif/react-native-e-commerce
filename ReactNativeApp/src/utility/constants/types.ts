@@ -17,6 +17,13 @@ export interface IRouteProp {
 
 export interface INavigation {
   navigate: (params: {name: string}) => void;
+  goBack: () => void;
+}
+
+export interface IImage {
+  uri: string;
+  type: string;
+  name: string;
 }
 
 export interface IUser {

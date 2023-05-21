@@ -163,6 +163,23 @@ const settingsSlice = createSlice({
     setProducts(state, {payload}: PayloadAction<IProduct[]>) {
       state.products = payload;
     },
+    pushProduct(state, {payload}: PayloadAction<IProduct>) {
+      state.products.push(payload);
+    },
+    swapProduct(state, {payload}: PayloadAction<IProduct>) {
+      const i = state.products.findIndex(({_id}) => _id === payload._id);
+
+      if (i > -1) {
+        state.products[i] = payload;
+      }
+    },
+    removeProduct(state, {payload}: PayloadAction<string>) {
+      const i = state.products.findIndex(({_id}) => _id === payload);
+
+      if (i > -1) {
+        state.products.splice(i, 1);
+      }
+    },
     pushProductReview(
       state,
       {payload}: PayloadAction<{_id: string; feedback: IFeedback}>,
@@ -225,6 +242,9 @@ export const {
   incCartItem,
   decCartItem,
   setProducts,
+  pushProduct,
+  swapProduct,
+  removeProduct,
   setOrders,
   setUsersOrders,
   setUsers,

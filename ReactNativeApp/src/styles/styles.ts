@@ -179,6 +179,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: sizes['3xl'],
     borderBottomLeftRadius: sizes['3xl'],
   },
+  productActionContainer: {
+    position: 'absolute',
+    right: sizes.xxl,
+    bottom: sizes.xl,
+  },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -189,6 +194,12 @@ const styles = StyleSheet.create({
     marginBottom: -sizes.lg,
     resizeMode: 'contain',
   },
+  pickerImage: {
+    width: 75,
+    height: 75,
+    resizeMode: 'contain',
+    marginLeft: sizes.md,
+  },
   cartImage: {
     width: 150,
     height: 150,
@@ -196,6 +207,10 @@ const styles = StyleSheet.create({
   emptyCartImage: {
     width: 250,
     height: 250,
+  },
+  absoluteRight: {
+    position: 'absolute',
+    right: 0,
   },
 });
 

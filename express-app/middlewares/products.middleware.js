@@ -1,4 +1,5 @@
 const validateProduct = (req, res, next) => {
+  console.log(req.body, req.files);
   if (!req.body || !req.files) {
     return res.status(400).send({ message: "Please enter the missing data!" });
   }
@@ -17,7 +18,7 @@ const validateProduct = (req, res, next) => {
     return res.status(400).send({ message: "Please enter a category!" });
   }
 
-  if (!price) {
+  if (!price || isNaN(parseInt(price))) {
     return res.status(400).send({ message: "Please enter a price!" });
   }
 

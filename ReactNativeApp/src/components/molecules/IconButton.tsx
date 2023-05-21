@@ -3,6 +3,7 @@ import {
   GestureResponderEvent,
   Image,
   ImageProps,
+  StyleProp,
   TouchableOpacity,
   View,
   ViewProps,
@@ -31,6 +32,7 @@ export interface IIconButtonProps extends ViewProps, ViewStyle {
   gradientProps?: LinearGradientProps;
   titleProps?: ITypographyProps;
   imageProps?: ImageProps;
+  containerStyle?: StyleProp<ViewStyle>;
   onPress?:
     | (((event: GestureResponderEvent) => void) & (() => void))
     | undefined;
@@ -50,6 +52,7 @@ const IconButton: FC<IIconButtonProps> = forwardRef<View, IIconButtonProps>(
       gradientProps,
       titleProps,
       imageProps,
+      containerStyle,
       variant = 'standard',
       fontColor = variant === 'gradient-text' ? 'white' : undefined,
       onPress,
@@ -123,7 +126,10 @@ const IconButton: FC<IIconButtonProps> = forwardRef<View, IIconButtonProps>(
     );
 
     return (
-      <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={onPress}
+        style={containerStyle}>
         {variant === 'gradient' || variant === 'gradient-text'
           ? renderLinearGradient()
           : renderContent()}

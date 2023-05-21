@@ -41,7 +41,7 @@ const UsersOrderScreen: FC<INavigationProp> = memo(({navigation}) => {
         navigation,
         children: (
           <Input
-            width="90%"
+            width="92%"
             placeholder="Search by id"
             marginHorizontal={sizes.md}
             endAdornment={<Icon name="search" color="dark" />}

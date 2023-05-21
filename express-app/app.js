@@ -23,6 +23,7 @@ const {
   readProductsController,
   updateProductReviewController,
   deleteProductController,
+  updateProductController,
 } = require("./controllers/products.controller");
 const {
   createAdminController,
@@ -102,6 +103,13 @@ app.post(
   verifyAdminToken,
   validateProduct,
   insertProductController
+);
+
+app.patch(
+  "/products/:id",
+  verifyAdminToken,
+  validateProduct,
+  updateProductController
 );
 
 app.delete("/products/:id", verifyAdminToken, deleteProductController);

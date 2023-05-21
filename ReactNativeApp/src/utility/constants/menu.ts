@@ -24,4 +24,15 @@ export const adminMenuItems: IMenuItem[] = [
     title: 'Users Orders',
     screenName: MENU_SCREENS.USERS_ORDERS,
   },
+  {
+    isMatericalIcon: true,
+    iconName: 'shopping-basket',
+    title: 'Products',
+    screenName: MENU_SCREENS.ADMIN_PRODUCTS,
+  },
+  {
+    iconName: 'add',
+    title: 'Add Product',
+    screenName: MENU_SCREENS.ADD_PRODUCT,
+  },
 ];

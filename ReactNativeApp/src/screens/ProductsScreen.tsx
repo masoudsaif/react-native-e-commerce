@@ -5,44 +5,44 @@ import {useSelector} from 'react-redux';
 
 import Icon from '../components/atoms/Icon';
 import Input from '../components/atoms/Input';
+import ProductCard from '../components/organisms/ProductCard';
 import ScreenLayout from '../components/organisms/ScreenLayout';
-import UserCard from '../components/organisms/UserCard';
-import useUsers from '../hooks/useUsers';
+import useProducts from '../hooks/useProducts';
 import {settingsState} from '../redux/store';
 import {sizes} from '../styles/sizes';
 import styles from '../styles/styles';
-import {INavigationProp, IUser} from '../utility/constants/types';
+import {INavigationProp, IProduct} from '../utility/constants/types';
 
-const UsersScreen: FC<INavigationProp> = memo(({navigation}) => {
-  const {users} = useSelector(settingsState);
-  const {getUsers} = useUsers();
+const ProductsScreen: FC<INavigationProp> = memo(({navigation}) => {
+  const {products} = useSelector(settingsState);
+  const {getProducts} = useProducts();
   const [search, setSearch] = useState('');
-  const filteredUsers = useMemo(
+  const filteredProducts = useMemo(
     () =>
-      users.filter(({email}) =>
-        email.toLowerCase().includes(search.toLowerCase()),
+      products.filter(({name}) =>
+        name.toLowerCase().includes(search.toLowerCase()),
       ),
-    [users, search],
+    [products, search],
   );
 
   const handleSearchChange = (text: string) => setSearch(text);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleGetUsers = useCallback(() => getUsers(), []);
-
-  const handleKeyExtractor = (item: IUser) => item._id;
+  const handleKeyExtractor = (item: IProduct) => item._id;
 
   const renderSeparator = () => <View style={styles.divider} />;
 
-  const renderProduct = ({item}: ListRenderItemInfo<IUser>) => (
-    <UserCard
-      user={item}
-      paddingVertical={sizes.lg}
-      style={styles.screenHorizontalMargin}
-    />
+  const renderProduct = ({item}: ListRenderItemInfo<IProduct>) => (
+    <ProductCard isAdmin product={item} navigation={navigation} />
   );
 
-  useFocusEffect(handleGetUsers);
+  const handleGetProducts = useCallback(() => {
+    if (products.length === 0) {
+      getProducts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products]);
+
+  useFocusEffect(handleGetProducts);
 
   return (
     <ScreenLayout
@@ -51,8 +51,8 @@ const UsersScreen: FC<INavigationProp> = memo(({navigation}) => {
         children: (
           <Input
             width="92%"
-            placeholder="Search by email"
-            marginHorizontal={sizes.md}
+            placeholder="Search by name"
+            marginLeft={sizes.md}
             endAdornment={<Icon name="search" color="dark" />}
             onChangeText={handleSearchChange}
           />
@@ -62,12 +62,12 @@ const UsersScreen: FC<INavigationProp> = memo(({navigation}) => {
       <FlatList
         keyExtractor={handleKeyExtractor}
         ItemSeparatorComponent={renderSeparator}
-        data={filteredUsers}
-        contentContainerStyle={[styles.screenHeaderPadding]}
+        data={filteredProducts}
         renderItem={renderProduct}
+        contentContainerStyle={styles.screenHeaderPadding}
       />
     </ScreenLayout>
   );
 });
 
-export default UsersScreen;
+export default ProductsScreen;
