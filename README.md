@@ -3,6 +3,7 @@
 # Extra Project
 
 This project is tested on ios only!
+The project is based on this [design](https://www.uplabs.com/posts/grocery-app-ios-mobile-ui-kits-food-delivery-app)
 
 ## Available Scripts
 
