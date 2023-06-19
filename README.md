@@ -9,12 +9,6 @@ The project is based on this [design](https://www.uplabs.com/posts/grocery-app-i
 
 Please add the following values to the .env in the express-app
 
-DB_URI=mongodb+srv://admin:a7oCH8DI5TmbWx7C@cluster.jmlrro8.mongodb.net/?retryWrites=true&w=majority
-JWT_KEY=\_Qb4YFrSO_L_M8hQiyIC-CIBmad84arAchnS47pykSPwZWkQXZCkBivQLa7TwNTRWmUKaSPoXmSOLdjeDNMvxCim-SySHbLsjji_Bp9Mi05K_z_mnM9hUZhmnryGybe-sHHZAyjYHrysrrxpGJIwmc2ynYQYqjMXP_W8pAJH1oc
-ACCESS_KEY=AKIATFB6LRKVETSVZWB4
-SECRET_ACCESS_KEY=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
-BUCKET_NAME=express-app-bucket
-
 In the express-app directory, you can run:
 
 ### `npm install`
