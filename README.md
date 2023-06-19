@@ -7,8 +7,6 @@ The project is based on this [design](https://www.uplabs.com/posts/grocery-app-i
 
 ## Available Scripts
 
-Please add the following values to the .env in the express-app
-
 In the express-app directory, you can run:
 
 ### `npm install`
